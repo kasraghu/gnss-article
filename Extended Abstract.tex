@@ -1,0 +1,154 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Events Synchronization in a Hardware-Software Navigation Receiver\\
+\thanks{Funded by Occitanie region.}
+}
+
+\author{
+\IEEEauthorblockN{Benoît Priot}
+\IEEEauthorblockA{\textit{ISAE-SUPAERO}\\
+Toulouse, France \\
+benoit.priot@isae-supaero.fr}
+\and
+\IEEEauthorblockN{Arnaud Dion}
+\IEEEauthorblockA{\textit{ISAE-SUPAERO}\\
+Toulouse, France \\
+arnaud.dion@isae-supaero.fr}
+\and
+\IEEEauthorblockN{Guillaume Beaugendre}
+\IEEEauthorblockA{\textit{ISAE-SUPAERO}\\
+Toulouse, France \\
+guillaume.beaugendre@isae-supaero.fr}
+\and
+\IEEEauthorblockN{Raghuveer Kasaraneni}
+\IEEEauthorblockA{\textit{ISAE-SUPAERO}\\
+Toulouse, France \\
+raghuveer.kasaraneni@isae-supaero.fr}
+}
+
+\maketitle
+
+\begin{abstract}
+A System-On-Chip design and implementation of a navigation receiver is presented. The full implementation is still undergoing, but preliminary results demonstrate accuracy, flexibility and ease of use of the system.
+\end{abstract}
+
+\begin{IEEEkeywords}
+GNSS receiver, System-On-Chip
+\end{IEEEkeywords}
+
+\section{Introduction}
+The event management in a Global Navigation Satellite Systems (GNSS) receiver is critical. Indeed, the standard position, velocity and timing (PVT) solution is based on the propagation delay estimation from the receiver to each satellite in view. Thus GNSS receivers typically involve high sampling frequency, event synchronization and low latency closed control loops. Due to the implementation of matrix of binary operators, architectures based on Field-Programmable Gate Arrays (FPGAs) allow an interesting concurrent and real-time signal processing. The latency of computations in an FPGA is completely deterministic by their very construction, downto a clock cycle. However, designing applications to be ported on FPGA is usually complex and lack the flexibility of sofwtare application for fixed architecture processor. The typical solution is then to use the Software Defined Radio (SDR) approach where all the computations are performed by high performance/high frequency Digital Signal Processors \cite{Maj18}. Software receivers are already proposed to scientific or industrial community. However, as the architecture is fixed, they are not suited when targeting highly integrated embedded applications or intended for performance, such as power consumption, memory usage or high computations. Whatever the performance of the DSP, it is limited by fixed number of operators and the bandwidth of the memory \cite{Row04}.
+
+A promising alternative to overcome these limitations is to leverage on co-design environments \cite{Dion10}. Such environments allow to create a heterogeneous hardware (HW) and software (SW) architecture, that is to partition the application between HW and SW modules. The ability to emulate both HW and SW module execution, before implementation, is a great advantage for validating and debugging, as well as making it evolve rapidly according to the emulation results.  
+
+The purpose of this work is to create a real-time GNSS receiver which offers various possibilities:
+\begin{itemize}
+\item Critical management of time which is the core of a GNSS receiver,
+\item Full access to the architecture,
+\item Rapid and easy reconfigurations of the architecture,
+\item Validation on HW targets and real situation scenarii of the algorithms developed on SW (Matlab or Octave) receiver.
+\end{itemize}
+First, a review of the co-design flow and the distributed GNSS architecture will be presented. We will demonstrate the versatility of the approach, from algorithm to architecture. Then a description of the innovative time management and illustrative results will be shown. As stated previously, this is the core of a receiver, and control loop latency should be bounded as tight as possible.
+%A review of the co-design GNSS architecture is presented, together with a description of the innovative time management and illustrative results.
+%The architectural and functional modifications are simple, with no need of continual recordings of HW and SW targets.
+\section{System design}
+In order to create  a flexible distributed architecture for a bi-constellation (GPS/Galileo) GNSS receiver, new seamless co-design and high level synthesis tools have been used. The receiver, so-called low-level layer, supports the demodulation of signals, the acquisition and tracking of satellites in view, and leads to the generation of pseudo-distances (and Doppler frequencies) between the receiver and the satellites. The navigator, so-called high-level layer, converts the receiver-to-satellite pseudo-distances into PVT solutions. From this generic architecture, a standard receiver/navigator is implemented. It is designed to operate with GPS L1 C/A and Galileo E1 signals. The development, based on SystemC language, is supported by the implementation of a sequential functional simulator in Matlab or Octave (Matlab compatible GNU software). This flow is presented in fig.~\ref{fig:DesignFlow}. From the co-design architecture developed on dedicated third party tools, a real-time implementation of the standard receiver/navigator is performed on a hardware platform. Such implementation is based on existing development boards, i.e., the Zedboard (based on Xilinx Zynq-7000), with a radio-frequency (RF) front-end extension board. Such generic development boards are therefore inexpensive. 
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=8cm]{figs/FlotY.png}}
+\caption{Seamless design flow.}
+\label{fig:DesignFlow}
+\end{figure}
+
+\begin{enumerate}
+\item blabla
+\end{enumerate}
+
+An earlier version of this receiver has been used to assess the performances of computational error mitigation techniques \cite{Haf16} due to current leakage in components or due to low battery level.
+The  receiver/navigator co-design architecture aims to be open and allows the following features:
+\begin{itemize}
+\item to configure the receiver/navigator in order to refine its behavior,
+\item to visualize its state using previously defined and documented observables,
+\item to modify its architecture in order to adapt it to specific usages,
+\item to update the modules' algorithms in order to optimize their functioning or to adapt them to the planned changes in the signals,
+\item to set up the communication processes between the different components of the receiver and navigator in order to be able to introduce feedback and couplings.
+\end{itemize}
+
+
+SpaceStudio is a C/C++ framework for developing applications to speed-up performance using CPU+FPGA without knowing the underlying hardware infrastructure of these technologies. The development of applications is intuitively partitioned to target heterogeneous computing platforms (e.g., System-On-Chip). Designers explore, analyze, profile, and validate designs using the SpaceStudio solution. 
+\begin{figure}[!ht]
+\centerline{\includegraphics[width=8cm]{figs/Synoptique.png}}
+\caption{block diagram of the architecture.}
+\label{fig:BlockDiag}
+\end{figure}
+A simplified block diagram of the architecture considered in this contribution is shown in fig.~\ref{fig:BlockDiag}, with the following blocks:
+\begin{itemize}
+\item RF front end which provides samples coming from either an antenna or a file to the system
+\item The acquisition which searches for satellites from the received signal
+\item Tracking loops wich follow satellite signals
+\item The manager deals both with acquisition and tracking processes. It also initialize and monitor the tracking loops.
+\item The measurement generator which converts observables coming from tracking loops into raw measurements (pseudo range, doppler frequency, carrier phase).
+\item The navigator calculates the PVT solution.
+\end{itemize}  
+Using SpaceStudio co-design, we performed the partitioning HW / SW with the SystemC language that allows to generate IP with Vivado High Level Synthesis. This novel implementation technique offers more flexibility as no VHDL coding is required except for the interfaces with the front-end. Thus, except for loop filters, the tracking loops are HW-based. Fast computation capabilities (acquisition FFT and channel tracking) are supported by the HW part. Slow computation capabilities (loop filters, raw measurement, navigator) are supported by the SW part using a softcore processor as well as the ARM processor. 
+
+
+
+
+\section{Event Management}
+Compared to the architecture presented in \cite{Maj18}, the novelty of this project is the direct connection of the front-end to tracking loops (see figure). Each sample is processed in hard real-time. Indeed, there is no buffer at the input of the tracking loops which are parallel and autonomous. The role of the ARM processor is then limited to the configuration (initialization and measurement process) of the different tracking channels and to recover the observations when available. Regarding the tracking initialization, we are able to initialize the tracking channels using the output of the acquisition, taking into account the non deterministic delay from the computation process. The maximum delay for this initialization without losing the correlation can be bounded depending on the precision of the acquisition and the maximum dynamic of the vehicle. With respect to the tracking management,  (??) to generate measurements with a very precise timing. Events are propagated in the tracking loop with a specific pipeline. This allows for measurement synchronization even if the tracking channels are working independently.
+
+
+\section{Results and discussion}
+
+ 
+\begin{figure}[!htbp]
+\centerline{\includegraphics[width=8cm]{figs/Correlateurs.jpg}}
+\caption{Overall timing evolution of the state of the receiver. \textbf{FIG TO BE CHANGED}}
+\label{fig:Overalltiming}
+\end{figure}
+We performed the implementation on-target acquisition and real time tracking using a recorded signal. The test of this architecture has shown the capability to initialize the channels from the results of the acquisition taking into account the computing time intrinsic to the acquisition. The results obtained when using tracking loops (correlators, C/N0, discriminators) are shown in fig.~\ref{fig:Overalltiming}, when initialized with acquisition outputs. At approximately 1.3s, the acquisition provides its results to the manager which configure the tracking loop. At 2.1 s, the tracking loop starts tracking process. From that moment, the loop converges and work properly.
+
+In addition to the development of the aforementioned co-design architecture, one of the expected outputs is a Vivado project (or EDK) compatible with the hardware platform, targeted and validated on such platform.
+
+\section{Conclusion}
+In this work, 
+In the camera-ready version of the article, we expect to provide results for the full implementation on target with acquisition, tracking and navigation. Moreover, we aim to initialize tracking loops using dynamic signals recorded during a measurement campaign on a dynamic ground vehicle. Finally, we aim to determine PVT and the trajectory of the vehicule.
+
+
+A co-design GNSS architecture is of great interest to fix the complexity and non-flexibility issues related to the use of FPGA. It offers both the capability of a critical management of time and of an open and easily modifiable/ architecture.
+monitoring infrastructure during simulation
+facilitating early key decisions and shortening the development process.
+automatic code generation process
+
+
+
+
+\section*{Acknowledgment}
+
+If necessary.
+
+
+
+\begin{thebibliography}{00}
+\bibitem{Maj18} M. Majoral, C. Fernandez-Prades, J. Arribas, "Implementation of GNSS Receiver Hardware Accelerators in All-Programmable System-On-Chip Platforms," 
+\bibitem{Row04} C. Rowen, "Engineering the complex SOC,"  Prentice Hall, 2004
+\bibitem{Dion10} A. Dion, E. Boutillon, V. Calmettes, E. Liegon, "A Flexible Implementation of a Global Navigation Satellite System (GNSS) receiver for on-board satellite navigation," 2010 Conference on Design and Architectures for Signal and Image Processing (DASIP).
+\bibitem{Haf16} M. M. Hafidhi, E. Boutillon, A. Dion, "Demo: Localisation in a faulty digital GPS receiver," 2016 Conference on Design and Architectures for Signal and Image Processing (DASIP).
+\bibitem{Dion14} A. Dion "Reconfigurable Navigation Receiver for Space Application," PhD Thesis, ISAE, 2014.
+\end{thebibliography}
+\vspace{12pt}
+\color{red}
+IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+
+\end{document}
