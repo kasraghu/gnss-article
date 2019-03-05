@@ -63,7 +63,14 @@ First, a review of the co-design flow and the distributed GNSS architecture will
 %A review of the co-design GNSS architecture is presented, together with a description of the innovative time management and illustrative results.
 %The architectural and functional modifications are simple, with no need of continual recordings of HW and SW targets.
 \section{System design}
-In order to create  a flexible distributed architecture for a bi-constellation (GPS/Galileo) GNSS receiver, new seamless co-design and high level synthesis tools have been used. The receiver, so-called low-level layer, supports the demodulation of signals, the acquisition and tracking of satellites in view, and leads to the generation of pseudo-distances (and Doppler frequencies) between the receiver and the satellites. The navigator, so-called high-level layer, converts the receiver-to-satellite pseudo-distances into PVT solutions. From this generic architecture, a standard receiver/navigator is implemented. It is designed to operate with GPS L1 C/A and Galileo E1 signals. The development, based on SystemC language, is supported by the implementation of a sequential functional simulator in Matlab or Octave (Matlab compatible GNU software). This flow is presented in fig.~\ref{fig:DesignFlow}. From the co-design architecture developed on dedicated third party tools, a real-time implementation of the standard receiver/navigator is performed on a hardware platform. Such implementation is based on existing development boards, i.e., the Zedboard (based on Xilinx Zynq-7000), with a radio-frequency (RF) front-end extension board. Such generic development boards are therefore inexpensive. 
+The bi-constellation GNSS receiver system is designed to operate with GPS L1 C/A and Galileo E1 signals.
+The development is in C++ (SystemC) language and is supported by a sequential functional simulator implemented in Matlab/Octave.
+New seamless co-design and high level synthesis tools have been used to create a flexible distributed architecture.
+Implemented generic architecture has two layers: 
+1) Receiver (low-level layer) - supports the demodulation of signals, the acquisition and tracking of satellites in view, and leads to the generation of pseudo-distances (and Doppler frequencies) between the receiver and the satellites.
+2) Navigator (high-level layer) - converts the receiver-to-satellite pseudo-distances into PVT solutions. 
+Design flow is presented in fig.~\ref{fig:DesignFlow}.
+Using this methodology and dedicated third party tools, a real-time implementation of the standard receiver/navigator is performed on Xilinx Zynq-7000 SoC based development platform (Zedboard + RF front-end). Such generic development boards are inexpensive. 
 \begin{figure}[!ht]
 \centerline{\includegraphics[width=8cm]{figs/FlotY.png}}
 \caption{Seamless design flow.}
@@ -74,18 +81,20 @@ In order to create  a flexible distributed architecture for a bi-constellation (
 \item blabla
 \end{enumerate}
 
-An earlier version of this receiver has been used to assess the performances of computational error mitigation techniques \cite{Haf16} due to current leakage in components or due to low battery level.
-The  receiver/navigator co-design architecture aims to be open and allows the following features:
+An earlier version of this receiver has been used to assess the performances of computational error (due to current leakage in components or low battery level) mitigation techniques \cite{Haf16}.
+The  receiver/navigator co-design architecture aims to be open and allows to:
 \begin{itemize}
-\item to configure the receiver/navigator in order to refine its behavior,
-\item to visualize its state using previously defined and documented observables,
-\item to modify its architecture in order to adapt it to specific usages,
-\item to update the modules' algorithms in order to optimize their functioning or to adapt them to the planned changes in the signals,
-\item to set up the communication processes between the different components of the receiver and navigator in order to be able to introduce feedback and couplings.
+\item configure the receiver/navigator in order to refine its behavior,
+\item visualize its state using previously defined and documented observables,
+\item modify its architecture in order to adapt it to specific usages,
+\item update the modules' algorithms in order to optimize their functioning or to adapt them to the planned changes in the signals, and
+\item introduce feedback and couplings between different components of the receiver and navigator.
 \end{itemize}
 
 
-SpaceStudio is a C/C++ framework for developing applications to speed-up performance using CPU+FPGA without knowing the underlying hardware infrastructure of these technologies. The development of applications is intuitively partitioned to target heterogeneous computing platforms (e.g., System-On-Chip). Designers explore, analyze, profile, and validate designs using the SpaceStudio solution. 
+SpaceStudio is a C/C++ framework for fast development of applications (without fixing the underlying hardware infrastructure) for CPU+FPGA systems, 
+It is used to explore, analyze, profile, and validate designs.
+Applications can be intuitively partitioned to target heterogeneous computing platforms (e.g., System-On-Chips).
 \begin{figure}[!ht]
 \centerline{\includegraphics[width=8cm]{figs/Synoptique.png}}
 \caption{block diagram of the architecture.}
@@ -93,16 +102,16 @@ SpaceStudio is a C/C++ framework for developing applications to speed-up perform
 \end{figure}
 A simplified block diagram of the architecture considered in this contribution is shown in fig.~\ref{fig:BlockDiag}, with the following blocks:
 \begin{itemize}
-\item RF front end which provides samples coming from either an antenna or a file to the system
-\item The acquisition which searches for satellites from the received signal
-\item Tracking loops wich follow satellite signals
-\item The manager deals both with acquisition and tracking processes. It also initialize and monitor the tracking loops.
-\item The measurement generator which converts observables coming from tracking loops into raw measurements (pseudo range, doppler frequency, carrier phase).
-\item The navigator calculates the PVT solution.
+\item RF front-end - provides digital samples from either an antenna or a binary file.
+\item Acquisition - searches for satellites from the received signal.
+\item Tracking loops - demodulate signals and generate observables.
+\item Manager - initializes and monitors the Acquisition and the Tracking loops.
+\item Measurement generator - converts observables into raw measurements (pseudo range, doppler frequency, carrier phase).
+\item Navigator - estimates the PVT solution.
 \end{itemize}  
-Using SpaceStudio co-design, we performed the partitioning HW / SW with the SystemC language that allows to generate IP with Vivado High Level Synthesis. This novel implementation technique offers more flexibility as no VHDL coding is required except for the interfaces with the front-end. Thus, except for loop filters, the tracking loops are HW-based. Fast computation capabilities (acquisition FFT and channel tracking) are supported by the HW part. Slow computation capabilities (loop filters, raw measurement, navigator) are supported by the SW part using a softcore processor as well as the ARM processor. 
-
-
+SpaceStudio is used to generate HW/SW partitioned SystemC application. Faster (acquisition FFT and channel tracking) and slower computations (loop filters, raw measurement, navigator) are supported by the HW and SW (ARM as well as softcore processors) parts, respectively. 
+Vivado High Level Synthesis tool is used to generate FPGA IPs from SystemC.
+This novel implementation technique offers more flexibility as no VHDL coding is required except for the front-end interface.
 
 
 \section{Event Management}
